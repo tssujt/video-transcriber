@@ -1,0 +1,21 @@
+[project]
+name = "video-transcriber"
+version = "0.1.0"
+description = "A video transcriber demo based on Streamlit"
+authors = [{ name = "tssujt", email = "github@tssujt.xyz" }]
+dependencies = [
+    "streamlit>=1.35.0",
+    "openai>=1.35.1",
+    "pydub>=0.25.1",
+    "python-ffmpeg>=2.0.12",
+    "groq>=0.9.0",
+    "pysrt>=1.1.2",
+    "requests>=2.32.3",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+
+[tool.pdm]
+distribution = false
