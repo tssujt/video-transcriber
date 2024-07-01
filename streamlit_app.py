@@ -21,7 +21,6 @@ client = AzureOpenAI(
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
 )
 deployment_id = "whisper"
-enable_groq = bool(os.getenv("ENABLE_GROQ"))
 
 volcengine_base_url = "https://openspeech.bytedance.com/api/v1/vc"
 volcengine_access_token = os.getenv("VOLCENGINE_ACCESS_TOKEN")
