@@ -1,3 +1,4 @@
+import io
 import os
 import time
 
@@ -81,9 +82,35 @@ def volcengine_transcribe(audio_data: bytes, language: str = "zh-CN") -> dict:
     return response.json()
 
 
+def aliyun_transcribe(seg: AudioSegment, language: str = "zh-CN") -> dict:
+    stream = io.BytesIO()
+    seg.export(stream, format="wav")
+
+    response = requests.post(
+        "https://nls-gateway.cn-shanghai.aliyuncs.com/stream/v1/FlashRecognizer",
+        params=dict(
+            appkey=os.getenv("ALIYUN_NLS_APPKEY"),
+            token=os.getenv("ALIYUN_NLS_ACCESS_TOKEN"),
+            format="wav",
+            version="4.0",
+            sample_rate=16000,
+            enable_punctuation_prediction=True,
+            enable_inverse_text_normalization=True,
+            enable_semantic_sentence_detection=True,
+            sentence_max_length=15,
+        ),
+        data=stream.getvalue(),
+        headers={"content-type": "application/octet-stream"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == 20000000
+    return data["flash_result"]
+
+
 choosed_model = st.selectbox(
     "Use which transcription engine?",
-    ("Whisper", "Volcengine", "Groq Whisper"),
+    ("Aliyun", "Whisper", "Volcengine", "Groq Whisper"),
 )
 choosed_language = st.selectbox(
     "What language is the video in?",
@@ -190,6 +217,22 @@ if uploaded_file is not None:
                     sub = pysrt.SubRipItem(
                         i,
                         start=utter["start_time"],
+                        end=utter["end_time"],
+                        text=utter["text"],
+                    )
+                    subs.append(sub)
+            elif choosed_model == "Aliyun":
+                stime = time.time()
+                with st.status("Transcribing using Aliyun NLS: " + fname):
+                    aliyun_data = aliyun_transcribe(
+                        seg,
+                        choosed_language,
+                    )
+                subs = pysrt.SubRipFile()
+                for i, utter in enumerate(aliyun_data["sentences"], start=1):
+                    sub = pysrt.SubRipItem(
+                        i,
+                        start=utter["begin_time"],
                         end=utter["end_time"],
                         text=utter["text"],
                     )

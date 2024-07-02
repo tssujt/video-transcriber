@@ -4,8 +4,8 @@
 [metadata]
 groups = ["default"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:6c2efb2e2e546bbfd9f13400c9502476784dc926f241e63e81ecaa7fa6501ff6"
+lock_version = "4.4.2"
+content_hash = "sha256:d24be6bca811a02c397ee5bb53d0f2d34c3c741ef80b5f7e78f842f485cfff40"
 
 [[package]]
 name = "altair"
